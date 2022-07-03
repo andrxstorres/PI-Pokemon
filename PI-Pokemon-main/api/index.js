@@ -17,12 +17,27 @@
 //     =====`-.____`.___ \_____/___.-`___.-'=====
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-const server = require('./src/app.js');
-const { conn } = require('./src/db.js');
+const { default: axios } = require("axios");
+const server = require("./src/app.js");
+const { conn } = require("./src/db.js");
+const { Type } = require("./src/db.js");
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(() => {
+
+const forceTrue = { force: true };
+
+conn.sync(forceTrue).then(async () => {
   server.listen(3001, () => {
-    console.log('%s listening at 3001'); // eslint-disable-line no-console
+    console.log("%s listening at 3001"); // eslint-disable-line no-console
   });
+
+  if (forceTrue) {
+    const { data } = await axios.get("https://pokeapi.co/api/v2/type");
+    const types = data.results;
+    let id = 0;
+    for (let e of types) {
+      id++;
+      await Type.create({ typeId: id, name: e.name });
+    }
+  }
 });
