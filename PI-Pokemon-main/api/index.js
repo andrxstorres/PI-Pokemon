@@ -24,20 +24,21 @@ const { Type } = require("./src/db.js");
 
 // Syncing all the models at once.
 
-const forceTrue = { force: true };
+const force = { force: true };
 
-conn.sync(forceTrue).then(async () => {
+conn.sync(force).then(async () => {
   server.listen(3001, () => {
     console.log("%s listening at 3001"); // eslint-disable-line no-console
   });
 
-  if (forceTrue) {
+  if (force.force) {
     const { data } = await axios.get("https://pokeapi.co/api/v2/type");
     const types = data.results;
     let id = 0;
     for (let e of types) {
       id++;
-      await Type.create({ typeId: id, name: e.name });
+      await Type.create({ id: id, name: e.name });
     }
+    console.log("Database loaded!");
   }
 });

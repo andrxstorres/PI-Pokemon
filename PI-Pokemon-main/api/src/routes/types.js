@@ -10,8 +10,8 @@ router.get("/", async (req, res) => {
     // if (dbAllTypesResponse) {
     const allTypes = [];
     dbAllTypesResponse.forEach((e) => {
-      const { typeId, name } = e.dataValues;
-      allTypes.push({ typeId, name });
+      const { id, name } = e.dataValues;
+      allTypes.push({ id, name });
     });
     // }
     res.send(allTypes);
