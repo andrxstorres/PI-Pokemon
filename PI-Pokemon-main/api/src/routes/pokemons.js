@@ -45,43 +45,99 @@ router.get("/", async (req, res) => {
       }
       //SI NO RECIBIMOS NOMBRE POR QUERY, DEVOLVEMOS TODOS LOS POKEMONS
     } else {
-      const apiPokemons = await axios.get("https://pokeapi.co/api/v2/pokemon");
+      const apiPokemons = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=40");
       const { results } = apiPokemons.data;
+      // const moreApiPokemons = await axios.get(next);
+      // const secondRequest = moreApiPokemons.data.results;
       //DATA DE AXIOS GUARDA TODOS LOS POKEMONS EN OBJETOS DENTRO DE RESULTS
       //CADA OBJETO TIENE NOMBRE DEL POKEMON Y URL HACIA SUS DETALLES
 
       const pokemonsToHome = [];
+      const promiseArray = results.map((e) => axios.get(e.url));
+      Promise.all(promiseArray)
+        .then((pokemonToFilter) => {
+          pokemonToFilter.forEach(({ data }) => {
+            const { name, height, id, weight } = data;
+
+            const types = [];
+            data.types.map((e) => {
+              types.push(e.type.name);
+            });
+
+            const stats = {};
+            data.stats.forEach((e) => {
+              if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
+                stats[e.stat.name] = e.base_stat;
+              }
+            });
+
+            const image = data.sprites.other["official-artwork"].front_default;
+            let pokeToHome = { id, name, image, types, stats, height, weight };
+            pokemonsToHome.push(pokeToHome);
+          });
+          res.send(pokemonsToHome);
+        })
+        .catch((err) => {
+          res.status(400).send({ m: "Ocurrió un error en la petición de la ruta /pokemons!", err });
+        });
       //CREAMOS UN ARRAY PARA HACER UNA SUB-QUERY POR CADA POKEMON DENTRO DE UN FOR OF
-      for (let e of results) {
-        //A DIFERENCIA DE LAS VECES ANTERIORES, TOMAMOS EL NAME DEL OBJETO DE DATA.RESULTS
-        const { name, url } = e;
-        const { data } = await axios.get(url);
-        const { height, id, weight } = data;
+      // for (let e of results) {
+      //   //A DIFERENCIA DE LAS VECES ANTERIORES, TOMAMOS EL NAME DEL OBJETO DE DATA.RESULTS
+      //   const { name, url } = e;
+      //   const { data } = await axios.get(url);
+      //   const { height, id, weight } = data;
 
-        const types = [];
-        data.types.map((e) => {
-          types.push(e.type.name);
-        });
+      //   const types = [];
+      //   data.types.map((e) => {
+      //     types.push(e.type.name);
+      //   });
 
-        const stats = {};
-        data.stats.forEach((e) => {
-          if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
-            stats[e.stat.name] = e.base_stat;
-          }
-        });
-        // const stats = [];
-        // data.stats.forEach((e) => {
-        //   if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
-        //     stats.push({ [e.stat.name]: e.base_stat });
-        //   }
-        // });
+      //   const stats = {};
+      //   data.stats.forEach((e) => {
+      //     if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
+      //       stats[e.stat.name] = e.base_stat;
+      //     }
+      //   });
+      //   // const stats = [];
+      //   // data.stats.forEach((e) => {
+      //   //   if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
+      //   //     stats.push({ [e.stat.name]: e.base_stat });
+      //   //   }
+      //   // });
 
-        const image = data.sprites.other["official-artwork"].front_default;
-        let pokeToHome = { id, name, image, types, stats, height, weight };
-        pokemonsToHome.push(pokeToHome);
-      }
+      //   const image = data.sprites.other["official-artwork"].front_default;
+      //   let pokeToHome = { id, name, image, types, stats, height, weight };
+      //   pokemonsToHome.push(pokeToHome);
+      // }
 
-      res.send(pokemonsToHome);
+      // for (let e of secondRequest) {
+      //   //A DIFERENCIA DE LAS VECES ANTERIORES, TOMAMOS EL NAME DEL OBJETO DE DATA.RESULTS
+      //   const { name, url } = e;
+      //   const { data } = await axios.get(url);
+      //   const { height, id, weight } = data;
+
+      //   const types = [];
+      //   data.types.map((e) => {
+      //     types.push(e.type.name);
+      //   });
+
+      //   const stats = {};
+      //   data.stats.forEach((e) => {
+      //     if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
+      //       stats[e.stat.name] = e.base_stat;
+      //     }
+      //   });
+      //   // const stats = [];
+      //   // data.stats.forEach((e) => {
+      //   //   if (e.stat.name !== "special-attack" && e.stat.name !== "special-defense") {
+      //   //     stats.push({ [e.stat.name]: e.base_stat });
+      //   //   }
+      //   // });
+
+      //   const image = data.sprites.other["official-artwork"].front_default;
+      //   let pokeToHome = { id, name, image, types, stats, height, weight };
+      //   pokemonsToHome.push(pokeToHome);
+      // }
     }
   } catch (err) {
     res.status(400).send({ message: `Ocurrió un error en la petición de la ruta /pokemons! Es posible que '${req.query.name}' no sea un Pokémon existente!`, err });
