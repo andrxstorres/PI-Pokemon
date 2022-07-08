@@ -12,18 +12,23 @@ export default function Detail() {
 
   const idNum = Number(id);
   console.log(idNum);
+
   useEffect(() => {
-    dispatch(getDetailsById(idNum));
-  }, [dispatch, idNum]);
+    if (isNaN(idNum)) {
+      dispatch(getDetailsById(id));
+    } else {
+      dispatch(getDetailsById(idNum));
+    }
+  }, []);
 
   const details = useSelector((state) => state.details);
   const { name } = details;
-  // name === undefined && history.push("/home");
+
+  // name === undefined && alert("El pokemon no existe en la DB!");
 
   return (
     <div>
       <h1>{`${name}'s Details`}</h1>
-      {/* {Number(id) && <p>{`#${id}`}</p>} */}
       <Link to="/home">Back</Link>
       <DetailContainer details={details} />
     </div>

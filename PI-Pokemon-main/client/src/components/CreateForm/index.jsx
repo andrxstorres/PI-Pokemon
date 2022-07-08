@@ -47,7 +47,11 @@ export default function CreateForm({ types }) {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    dispatch(createPokemon(formData));
+    if (formData.types !== [] && formData.name !== "") {
+      dispatch(createPokemon(formData));
+    } else {
+      alert("Complete all fields!");
+    }
   };
 
   let lastCreated = useSelector((state) => state.details);
