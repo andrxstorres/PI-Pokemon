@@ -4,6 +4,7 @@ import HomeCardContainer from "../../components/HomeCardContainer/index.jsx";
 import { useEffect } from "react";
 import { getAllPokemons } from "../../redux/actions";
 import { useDispatch, useSelector } from "react-redux";
+import SearchBar from "../../components/SearchBar";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ export default function Home() {
     <div>
       <h1>Home</h1>
       <NavBar />
+      <SearchBar />
       <HomeCardContainer allPokemons={allPokemons} />
     </div>
   );

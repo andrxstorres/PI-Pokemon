@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // import { connect } from "react-redux";
 
 export class HomeCard extends React.Component {
@@ -7,19 +8,21 @@ export class HomeCard extends React.Component {
     this.state = {};
     // const { image, name, types } = this.props.pokemonDetails;
   }
-
+  //
   render() {
-    const { image, name, types } = this.props.pokemonDetails;
+    const { image, name, types, id } = this.props.pokemonDetails;
     return (
-      <div>
-        <img src={image} alt={`Pokemon ${name} official artwork`} />
-        <p>{name}</p>
-        <ul>
-          {types.map((e) => {
-            return <li key={e}>{e}</li>;
-          })}
-        </ul>
-      </div>
+      <Link to={`/details/${id}`}>
+        <div>
+          <img src={image} alt={`Pokemon ${name} official artwork`} />
+          <p>{name}</p>
+          <ul>
+            {types.map((e) => {
+              return <li key={e}>{e}</li>;
+            })}
+          </ul>
+        </div>
+      </Link>
     );
   }
 }

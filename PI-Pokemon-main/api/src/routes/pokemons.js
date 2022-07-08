@@ -188,13 +188,24 @@ router.post("/", async (req, res) => {
     });
 
     if (types) {
-      types.forEach(async (e) => {
-        const typeToAdd = await Type.findOne({ where: { name: e } });
+      for (let type of types) {
+        const typeToAdd = await Type.findOne({ where: { name: type } });
         await newPokemon.addType(typeToAdd);
+      }
+
+      const responsePokemon = await Pokemon.findByPk(newPokemon.id, {
+        include: [
+          {
+            model: Type,
+            through: { attributes: [] },
+          },
+        ],
       });
+
+      return res.status(201).send({ m: `Your new Pokémon '${name}' has been saved!`, newPokemon: responsePokemon });
     }
 
-    res.status(201).send({ m: `Your new Pokémon '${name}' has been saved!` });
+    res.status(201).send({ m: `Your new Pokémon '${name}' has been saved!`, newPokemon });
   } catch (err) {
     res.status(400).send({ m: `Something went wrong when creating '${req.body.name}'`, err });
   }

@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { useSelector } from "react-redux";
+// import { useState } from "react";
+// import { useSelector } from "react-redux";
 import DetailCard from "../DetailCard";
 
-export default function DetailContainer() {
-  const [localState, setLocal] = useState({});
+export default function DetailContainer({ details }) {
+  // const [localState, setLocal] = useState({});
 
-  const newDetails = useSelector((state) => state.details);
+  // const newDetails = useSelector((state) => state.details);
 
-  console.log(newDetails);
+  const { id, name, image, types, stats, height, weight } = details;
 
   return (
     <>
-      <DetailCard />
+      <DetailCard id={id} name={name} image={image} types={types} stats={stats} height={height} weight={weight} />
     </>
   );
 }
