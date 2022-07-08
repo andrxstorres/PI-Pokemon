@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createPokemon } from "../../redux/actions";
+import { useHistory } from "react-router-dom";
 
 export default function CreateForm({ types }) {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function CreateForm({ types }) {
   });
 
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const setTypes = (e) => {
     if (formData.types.includes(e.target.name)) {
@@ -43,12 +45,13 @@ export default function CreateForm({ types }) {
     });
   };
 
-  console.log(formData);
-
   const onSubmitHandler = (e) => {
     e.preventDefault();
     dispatch(createPokemon(formData));
   };
+
+  let lastCreated = useSelector((state) => state.details);
+  if (lastCreated.name === formData.name) history.push(`/details/${lastCreated.id}`);
 
   return (
     <>
@@ -56,7 +59,7 @@ export default function CreateForm({ types }) {
         <label htmlFor="name">Name: </label>
         <input type="text" name="name" required onChange={onChangeHandler} />
         <br />
-        <label htmlFor="types">Types: </label>
+        {/* <label htmlFor="types">Types: </label> */}
         <fieldset>
           <legend>Types</legend>
           {types.map((type) => {

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 // import { connect } from "react-redux";
+import altImage from "../../images/pokeball_gif.gif";
 
 export class HomeCard extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export class HomeCard extends React.Component {
     return (
       <Link to={`/details/${id}`}>
         <div>
-          <img src={image} alt={`Pokemon ${name} official artwork`} />
+          {image ? <img src={image} alt={`Pokemon ${name} official artwork`} /> : <img src={altImage} alt={`${name}'s Official Artwork`} width="300px" />}
           <p>{name}</p>
           <ul>
             {types.map((e) => {

@@ -45,6 +45,7 @@ router.get("/", async (req, res) => {
       }
       //SI NO RECIBIMOS NOMBRE POR QUERY, DEVOLVEMOS TODOS LOS POKEMONS
     } else {
+      console.log("GET_ALL: esperando petición a la API");
       const apiPokemons = await axios.get("https://pokeapi.co/api/v2/pokemon?limit=40");
       const { results } = apiPokemons.data;
       // const moreApiPokemons = await axios.get(next);
@@ -175,6 +176,10 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const { name, hp, attack, defense, speed, height, weight, types } = req.body;
+
+  const pokemonExistsInDB = await Pokemon.findOne({ where: { name: name } });
+  console.log("pokemon exists in DB", pokemonExistsInDB);
+  if (pokemonExistsInDB) return res.status(409).send({ m: `The name '${name}' has already been used to create another Pokemon.` });
 
   try {
     const newPokemon = await Pokemon.create({

@@ -1,15 +1,15 @@
 // import { useState } from "react";
 // import { useSelector } from "react-redux";
 
-export default function DetailCard({ id, name, image, types, stats, height, weight }) {
+export default function DetailCard({ id, name, image, altImage, types, stats, height, weight }) {
   // const [localState, setLocal] = useState({});
 
   let arrStats;
-  if (stats) arrStats = Object.getOwnPropertyNames(stats).map((s) => `${s}:${stats[s]}`);
+  if (stats) arrStats = Object.getOwnPropertyNames(stats).map((s) => `${s}: ${stats[s]}`);
 
   return (
     <div>
-      <img src={image} alt={`${name}'s Official Artwork`} />
+      {image ? <img src={image} alt={`${name}'s Official Artwork`} /> : <img src={altImage} alt={`${name}'s Official Artwork`} width="300px" />}
       <p>Types</p>
       <ul>
         {types &&
@@ -22,9 +22,9 @@ export default function DetailCard({ id, name, image, types, stats, height, weig
       </ul>
       <p>Stats</p>
       <ul>
-        {stats && arrStats.map((stat) => <li key={stat}>{stat}</li>)}
-        <li>Height:{height}</li>
-        <li>Weight:{weight}</li>
+        {stats && arrStats.map((stat) => <li key={stat}> {stat}</li>)}
+        <li>Height: {height}</li>
+        <li>Weight: {weight}</li>
       </ul>
     </div>
   );
